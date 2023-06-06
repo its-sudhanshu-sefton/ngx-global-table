@@ -1,0 +1,71 @@
+<div class="dynanic-table-container" >
+	<div class="dynamic-table-activity" (click)="$event.stopPropagation()" >
+		<div (click)="isActivityVisible = !isActivityVisible" >
+			<p class="activity-title">Activity</p>
+		</div>
+		<div *ngIf="isActivityVisible" class="activity-menu-container" >
+			<h4 class="activity-subtitle" >Show || Hide column</h4>
+			<div class="activity-menu" *ngFor="let act of activityList; let i = index">
+				<input [checked]="act.isChecked"
+				[name]="act.value"
+				[value]="act.value"
+				(change)="changeEvent($event)"
+				type="checkbox">
+				<span>
+					{{ act.headerName | titlecase }}
+				</span>
+			</div>
+		</div>
+	</div>
+	<div class="dynamic-table">
+		<table>
+			<tbody>
+				<tr>
+					<th *ngFor="let header of tableHeader; let headerIndex = index">
+						<span class="prevent-selection">
+							{{ header.headerName | titlecase }}
+						</span>
+						<span (click)="sortHeaderEvent(header.config?.arrowDirection, header.value, headerIndex)"
+							class="arrow prevent-selection">
+							{{  header.config?.arrowDirection === ARROW_DIRECTION.UP ? '&#8593;' : '&#8595;' }}
+						</span>
+					</th>
+				</tr>
+
+				<tr *ngFor="let data of tableData; let i = index">
+					<td *ngFor="let h of tableHeader">
+						<div class="table-column">
+							<div>
+								{{ data[h.value] | titlecase }}
+							</div>
+
+							<div *ngIf="h.extras">
+								<span *ngIf="h.extras?.displayMenu"
+									class="red">
+									<div (click)="openMenu($event, data)"
+										class="three-dot">
+										<div></div>
+										<div></div>
+										<div></div>
+									</div>
+								</span>
+								<span *ngIf="h.extras?.element"
+									[innerHtml]="h.extras.element">
+								</span>
+							</div>
+
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<app-menu *ngIf="menuPosition.x && menuPosition.y"
+		[menuPosition]="menuPosition"
+		[menuOption]="menuOption"
+		(menuEvent)="selectedMenuOptionEvent($event)">
+	</app-menu>
+	<app-paginator (paginationEvent)="paginationEvent.next($event)" [elementLenght]="totalElement" ></app-paginator>
+
+</div>
